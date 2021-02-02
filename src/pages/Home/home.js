@@ -25,10 +25,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Home = () => {
+const Home = ({ catData, setCatData }) => {
   const classes = useStyles();
-  const [catData, setCatData] = useState(null);
-  const apiKey = process.env.REACT_APP_CAT_API_KEY;
 
   return (
     <>
@@ -58,11 +56,29 @@ const Home = () => {
         <div>
           <h2>
             {catData !== null
-              ? "Images of cats to appear here"
+              ? "Your Uploaded Cat Photos"
               : "No images have been uploaded yet"}
           </h2>
+          <Grid container spacing={3}>
+            {catData !== null &&
+              catData.map((cat) => (
+                <Grid item xs={12} md={6} lg={3}>
+                  <div style={{ width: "340px", height: "340px" }}>
+                    <img
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                      key={cat.id}
+                      alt="cat"
+                      src={cat.url}
+                    />
+                  </div>
+                </Grid>
+              ))}
+          </Grid>
         </div>
-        <Grid container spacing={3}></Grid>
       </Container>
     </>
   );

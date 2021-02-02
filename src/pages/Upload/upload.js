@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { Redirect } from "react-router-dom";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import "./upload.scss";
 
 const useStyles = makeStyles((theme) => ({
@@ -26,15 +26,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Upload = () => {
+const Upload = (setCatUploadedData) => {
   const classes = useStyles();
   const apiKey = process.env.REACT_APP_CAT_API_KEY;
   const [selectedFile, setSelectedFile] = useState(null);
-  const [catUploadedData, setCatUploadedData] = useState(null);
-  console.log(catUploadedData);
+  const [loading, setLoading] = useState(false);
+
+  console.log(setCatUploadedData);
 
   // Example POST method implementation:
   async function postData(formData) {
+    setLoading(true);
     const response = await fetch("https://api.thecatapi.com/v1/images/upload", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors", // no-cors, *cors, same-origin
@@ -48,7 +50,9 @@ const Upload = () => {
       body: formData, // body data type must match "Content-Type" header
     })
       .then((response) => response.json())
-      .then((data) => setCatUploadedData(data)); // parses JSON response into native JavaScript objects
+      .then((data) => setCatUploadedData(data))
+      .catch((err) => console.log("Error", err));
+    setLoading(false); // parses JSON response into native JavaScript objects
   }
 
   console.log("selectedFile", selectedFile);
@@ -90,31 +94,37 @@ const Upload = () => {
           <div className={classes.heroButtons}>
             <Grid container spacing={2} justify="center">
               <Grid item className="file-select-upload-buttons">
-                <input
-                  hidden
-                  id="faceImage"
-                  type="file"
-                  onChange={(e) => handleFileSelect(e)}
-                />
+                {loading === true ? (
+                  <CircularProgress />
+                ) : (
+                  <>
+                    <input
+                      hidden
+                      id="faceImage"
+                      type="file"
+                      onChange={(e) => handleFileSelect(e)}
+                    />
 
-                <label htmlFor="faceImage">
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    aria-label="upload picture"
-                    component="span"
-                  >
-                    Select Image
-                  </Button>
-                </label>
-                <br />
-                <label>
-                  {selectedFile ? selectedFile.name : "Select Image"}
-                </label>
+                    <label htmlFor="faceImage">
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        aria-label="upload picture"
+                        component="span"
+                      >
+                        Select Image
+                      </Button>
+                    </label>
+                    <br />
+                    <label>
+                      {selectedFile ? selectedFile.name : "Select Image"}
+                    </label>
 
-                <Button onClick={() => handleSubmit()} color="primary">
-                  Upload
-                </Button>
+                    <Button onClick={() => handleSubmit()} color="primary">
+                      Upload
+                    </Button>
+                  </>
+                )}
               </Grid>
             </Grid>
           </div>
