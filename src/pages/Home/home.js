@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import Fab from "@material-ui/core/Fab";
+import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import "./home.scss";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
+import ThumbUpIcon from "@material-ui/icons/ThumbUp";
+import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -27,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
 
 const Home = ({ catData, setCatData }) => {
   const classes = useStyles();
+  const [buttonState, setButtonState] = useState({
+    favourite: false,
+  });
 
   return (
     <>
@@ -54,27 +63,50 @@ const Home = ({ catData, setCatData }) => {
       </div>
       <Container className={classes.cardGrid}>
         <div>
-          <h2>
+          <h2 className="title">
             {catData !== null
               ? "Your Uploaded Cat Photos"
               : "No images have been uploaded yet"}
           </h2>
-          <Grid container spacing={3}>
+          <Grid container className="gallery" spacing={3}>
             {catData !== null &&
               catData.map((cat) => (
-                <Grid item xs={12} md={6} lg={3}>
-                  <div style={{ width: "340px", height: "340px" }}>
-                    <img
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                      key={cat.id}
-                      alt="cat"
-                      src={cat.url}
-                    />
-                  </div>
+                <Grid className="gridItem" key={cat.id} item>
+                  <Paper
+                    style={{ backgroundImage: `url(${cat.url})` }}
+                    className="paper"
+                    elevation={3}
+                    square
+                  >
+                    <Tooltip title="Vote up!" aria-label="like">
+                      <Fab className="fab">
+                        <ThumbUpIcon color="primary" />
+                      </Fab>
+                    </Tooltip>
+
+                    <Tooltip title="Favourite!" aria-label="favourite">
+                      <Fab
+                        className="fab"
+                        onClick={() =>
+                          setButtonState({
+                            favourite: !buttonState.favourite.value,
+                          })
+                        }
+                      >
+                        {buttonState.favourite === true ? (
+                          <FavoriteIcon color="primary" />
+                        ) : (
+                          <FavoriteBorderIcon color="primary" />
+                        )}
+                      </Fab>
+                    </Tooltip>
+
+                    <Tooltip title="Vote down!" aria-label="dislike">
+                      <Fab className="fab" aria-label="unlike">
+                        <ThumbDownIcon color="secondary" />
+                      </Fab>
+                    </Tooltip>
+                  </Paper>
                 </Grid>
               ))}
           </Grid>

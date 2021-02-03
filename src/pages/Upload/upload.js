@@ -37,7 +37,7 @@ const Upload = (setCatUploadedData) => {
   // Example POST method implementation:
   async function postData(formData) {
     setLoading(true);
-    const response = await fetch("https://api.thecatapi.com/v1/images/upload", {
+    await fetch("https://api.thecatapi.com/v1/images/upload", {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       mode: "cors", // no-cors, *cors, same-origin
       cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
