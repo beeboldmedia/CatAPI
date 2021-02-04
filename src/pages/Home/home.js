@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Fab from "@material-ui/core/Fab";
@@ -11,6 +11,7 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ThumbDownIcon from "@material-ui/icons/ThumbDown";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -31,11 +32,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Home = ({ catData, setCatData }) => {
+const Home = ({
+  loading,
+  catImages,
+  favourites,
+  votes,
+  postFavourite,
+  postUnfavourite,
+}) => {
   const classes = useStyles();
-  const [buttonState, setButtonState] = useState({
-    favourite: false,
-  });
+  const arrayOfFavourites =
+    favourites !== null && favourites.map(({ image_id }) => image_id);
+
+  const handleFavourite = (catId) => {
+    if (!arrayOfFavourites.includes(catId)) {
+      postFavourite(catId);
+    }
+    let favourite = favourites.filter((x) => x.image_id === catId);
+    postUnfavourite(favourite[0].id);
+  };
 
   return (
     <>
@@ -64,51 +79,53 @@ const Home = ({ catData, setCatData }) => {
       <Container className={classes.cardGrid}>
         <div>
           <h2 className="title">
-            {catData !== null
-              ? "Your Uploaded Cat Photos"
-              : "No images have been uploaded yet"}
+            {loading === true
+              ? "Getting your images..."
+              : "Your Uploaded Cat Photos"}
           </h2>
           <Grid container className="gallery" spacing={3}>
-            {catData !== null &&
-              catData.map((cat) => (
-                <Grid className="gridItem" key={cat.id} item>
-                  <Paper
-                    style={{ backgroundImage: `url(${cat.url})` }}
-                    className="paper"
-                    elevation={3}
-                    square
-                  >
-                    <Tooltip title="Vote up!" aria-label="like">
-                      <Fab className="fab">
-                        <ThumbUpIcon color="primary" />
-                      </Fab>
-                    </Tooltip>
-
-                    <Tooltip title="Favourite!" aria-label="favourite">
-                      <Fab
-                        className="fab"
-                        onClick={() =>
-                          setButtonState({
-                            favourite: !buttonState.favourite.value,
-                          })
-                        }
+            {loading === true ? (
+              <CircularProgress />
+            ) : (
+              <>
+                {catImages !== null &&
+                  catImages.map((cat) => (
+                    <Grid className="gridItem" key={cat.id} item>
+                      <Paper
+                        style={{ backgroundImage: `url(${cat.url})` }}
+                        className="paper"
+                        elevation={3}
+                        square
                       >
-                        {buttonState.favourite === true ? (
-                          <FavoriteIcon color="primary" />
-                        ) : (
-                          <FavoriteBorderIcon color="primary" />
-                        )}
-                      </Fab>
-                    </Tooltip>
+                        <Tooltip title="Vote up!" aria-label="like">
+                          <Fab className="fab">
+                            <ThumbUpIcon color="primary" />
+                          </Fab>
+                        </Tooltip>
 
-                    <Tooltip title="Vote down!" aria-label="dislike">
-                      <Fab className="fab" aria-label="unlike">
-                        <ThumbDownIcon color="secondary" />
-                      </Fab>
-                    </Tooltip>
-                  </Paper>
-                </Grid>
-              ))}
+                        <Tooltip title="Favourite!" aria-label="favourite">
+                          <Fab
+                            className="fab"
+                            onClick={() => handleFavourite(cat.id)}
+                          >
+                            {arrayOfFavourites.includes(cat.id) === true ? (
+                              <FavoriteIcon color="primary" />
+                            ) : (
+                              <FavoriteBorderIcon color="primary" />
+                            )}
+                          </Fab>
+                        </Tooltip>
+
+                        <Tooltip title="Vote down!" aria-label="dislike">
+                          <Fab className="fab" aria-label="unlike">
+                            <ThumbDownIcon color="secondary" />
+                          </Fab>
+                        </Tooltip>
+                      </Paper>
+                    </Grid>
+                  ))}
+              </>
+            )}
           </Grid>
         </div>
       </Container>
