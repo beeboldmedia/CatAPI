@@ -93,14 +93,15 @@ const Home = ({
           <h2 className="title">
             {loading === true
               ? "Getting your images..."
-              : "Your Uploaded Cat Photos"}
+              : "Your Uploaded Cat Images"}
           </h2>
+
           <Grid container className="gallery" spacing={3}>
             {loading === true ? (
               <CircularProgress />
             ) : (
               <>
-                {catImages !== null &&
+                {catImages !== null ? (
                   catImages.map((cat) => (
                     <Grid className="gridItem" key={cat.id} item>
                       <Paper
@@ -143,7 +144,10 @@ const Home = ({
                       </Paper>
                       <h3>Score: {catScore(cat.id)}</h3>
                     </Grid>
-                  ))}
+                  ))
+                ) : (
+                  <h3>your images will appear here when you start uploading</h3>
+                )}
               </>
             )}
           </Grid>
