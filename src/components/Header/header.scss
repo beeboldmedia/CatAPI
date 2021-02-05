@@ -6,3 +6,26 @@ a {
 .toolbar {
   justify-content: space-between;
 }
+
+.homeButton {
+  display: flex;
+  align-items: center;
+
+  img {
+    height: 30px;
+    margin: 0px 5px 0px 5px;
+    &:nth-child(1) {
+      margin-left: 0px;
+    }
+  }
+}
+.uploadButton {
+  padding: 10px;
+  border: 2px solid white;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  svg {
+    margin-left: 5px;
+  }
+}

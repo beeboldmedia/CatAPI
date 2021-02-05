@@ -1,6 +1,24 @@
-# Getting Started with Create React App
+# Prerequisites
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Create a .env file at project root. Place your CatAPI key in this file in the following format:
+REACT_APP_CAT_API_KEY="XXX-API-KEY"
+
+# Improvements that can be made
+
+- Upload UI can be improved, possibly to find a way of showing image preview before uploading
+- Less loading of all data and instead spread new incoming data with existing allowing for on each list item to handle its own loading state
+- Refactor code to have smaller but more components
+- Can have an overall winner cat component displayed top/bottom of home page displaying cat with overall best score
+
+# Issues faced
+
+- CatAPI post requested temperamental with how body data is passed.
+- Vote data split into individual objects creating a challenge to get all values (0 & 1) for that given image and then convert all 0s to -1 before reducing the array to get the correct sum to display as scores.
+
+# Decisions made that were not mistakes
+
+- Purposely left in some material themed styling instead of converting it into respective scss handleFileSelect
+- File select button and then upload button. One more step but UX works better being able to change file instead of it being uploaded automatically
 
 ## Available Scripts
 

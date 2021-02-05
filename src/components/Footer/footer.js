@@ -1,13 +1,6 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-
-const useStyles = makeStyles((theme) => ({
-  footer: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(6),
-  },
-}));
+import "./footer.scss";
 
 function Copyright() {
   return (
@@ -20,9 +13,8 @@ function Copyright() {
 }
 
 const Footer = () => {
-  const classes = useStyles();
   return (
-    <footer className={classes.footer}>
+    <footer className="footer">
       <Typography
         variant="subtitle1"
         align="center"

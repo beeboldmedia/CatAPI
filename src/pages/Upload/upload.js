@@ -5,6 +5,12 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import CircularProgress from "@material-ui/core/CircularProgress";
+
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import "./upload.scss";
 
 const useStyles = makeStyles((theme) => ({
@@ -31,31 +37,28 @@ const Upload = (setCatUploadedData) => {
   const apiKey = process.env.REACT_APP_CAT_API_KEY;
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  console.log(setCatUploadedData);
-
-  // Example POST method implementation:
   async function postData(formData) {
     setLoading(true);
     await fetch("https://api.thecatapi.com/v1/images/upload", {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      mode: "cors", // no-cors, *cors, same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: "same-origin", // include, *same-origin, omit
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
       headers: {
         "x-api-key": apiKey,
       },
-      redirect: "follow", // manual, *follow, error
-      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: formData, // body data type must match "Content-Type" header
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+      body: formData,
     })
       .then((response) => response.json())
       .then((data) => setCatUploadedData(data))
       .catch((err) => console.log("Error", err));
-    setLoading(false); // parses JSON response into native JavaScript objects
+    setLoading(false);
+    handleOpen();
   }
-
-  console.log("selectedFile", selectedFile);
 
   const handleFileSelect = (e) => {
     const files = e.target.files;
@@ -67,6 +70,15 @@ const Upload = (setCatUploadedData) => {
     const formData = new FormData();
     formData.append("file", selectedFile);
     postData(formData);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedFile(null);
   };
 
   return (
@@ -88,8 +100,7 @@ const Upload = (setCatUploadedData) => {
             color="textSecondary"
             paragraph
           >
-            Upload an image of your cat, vote, unvote, favourite & unfavourite
-            to test functionality
+            Select an image from your device and upload to your gallery
           </Typography>
           <div className={classes.heroButtons}>
             <Grid container spacing={2} justify="center">
@@ -100,12 +111,12 @@ const Upload = (setCatUploadedData) => {
                   <>
                     <input
                       hidden
-                      id="faceImage"
+                      id="image"
                       type="file"
                       onChange={(e) => handleFileSelect(e)}
                     />
 
-                    <label htmlFor="faceImage">
+                    <label htmlFor="image">
                       <Button
                         variant="outlined"
                         color="primary"
@@ -116,23 +127,58 @@ const Upload = (setCatUploadedData) => {
                       </Button>
                     </label>
                     <br />
-                    <label>
-                      {selectedFile ? selectedFile.name : "Select Image"}
+                    <label className="fileName">
+                      {selectedFile && (
+                        <span>
+                          <b>File Name:</b> {selectedFile.name}
+                        </span>
+                      )}
                     </label>
 
-                    <Button onClick={() => handleSubmit()} color="primary">
-                      Upload
-                    </Button>
+                    {selectedFile && (
+                      <Button
+                        variant="outlined"
+                        onClick={() => handleSubmit()}
+                        color="primary"
+                      >
+                        Upload
+                      </Button>
+                    )}
                   </>
                 )}
               </Grid>
             </Grid>
           </div>
         </Container>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Success!</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Your photo was uploaded successfully...go to the home page to view
+              your gallery or cancel to upload another
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button href="/" variant="outlined" color="primary">
+              GO TO GALLERY
+            </Button>
+
+            <Button
+              variant="outlined"
+              onClick={() => handleClose()}
+              color="primary"
+              autoFocus
+            >
+              CANCEL
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
-      <Container className={classes.cardGrid}>
-        <Grid container spacing={3}></Grid>
-      </Container>
     </>
   );
 };

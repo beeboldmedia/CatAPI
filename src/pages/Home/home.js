@@ -2,6 +2,7 @@ import React from "react";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Fab from "@material-ui/core/Fab";
+import Link from "@material-ui/core/Link";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -25,11 +26,6 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(8),
     paddingBottom: theme.spacing(8),
   },
-  card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-  },
 }));
 
 const Home = ({
@@ -39,17 +35,33 @@ const Home = ({
   votes,
   postFavourite,
   postUnfavourite,
+  postVote,
 }) => {
   const classes = useStyles();
   const arrayOfFavourites =
     favourites !== null && favourites.map(({ image_id }) => image_id);
 
   const handleFavourite = (catId) => {
-    if (!arrayOfFavourites.includes(catId)) {
+    if (arrayOfFavourites.includes(catId)) {
+      let favourite = favourites.filter((x) => x.image_id === catId);
+      postUnfavourite(favourite[0].id);
+    } else {
       postFavourite(catId);
     }
-    let favourite = favourites.filter((x) => x.image_id === catId);
-    postUnfavourite(favourite[0].id);
+  };
+
+  const catScore = (catId) => {
+    let scoresArray = votes
+      .filter((x) => x.image_id === catId)
+      .map(({ value }) => value);
+    if (scoresArray.length > 0) {
+      let replacingZerosArray = scoresArray
+        .map((score) => (score === 0 ? score - 1 : score))
+        .reduce((a, b) => a + b);
+      return replacingZerosArray;
+    } else {
+      return 0;
+    }
   };
 
   return (
@@ -63,7 +75,7 @@ const Home = ({
             color="textPrimary"
             gutterBottom
           >
-            Cat Uploader
+            Cat Gallery
           </Typography>
           <Typography
             variant="h5"
@@ -71,8 +83,8 @@ const Home = ({
             color="textSecondary"
             paragraph
           >
-            Upload an image of your cat, vote, unvote, favourite & unfavourite
-            to test functionality
+            <Link href="/upload">Upload an image of your cat</Link>, vote up,
+            vote down, favourite & unfavourite to test functionality
           </Typography>
         </Container>
       </div>
@@ -98,7 +110,10 @@ const Home = ({
                         square
                       >
                         <Tooltip title="Vote up!" aria-label="like">
-                          <Fab className="fab">
+                          <Fab
+                            onClick={() => postVote(cat.id, 1)}
+                            className="fab"
+                          >
                             <ThumbUpIcon color="primary" />
                           </Fab>
                         </Tooltip>
@@ -117,11 +132,16 @@ const Home = ({
                         </Tooltip>
 
                         <Tooltip title="Vote down!" aria-label="dislike">
-                          <Fab className="fab" aria-label="unlike">
+                          <Fab
+                            className="fab"
+                            onClick={() => postVote(cat.id, 0)}
+                            aria-label="unlike"
+                          >
                             <ThumbDownIcon color="secondary" />
                           </Fab>
                         </Tooltip>
                       </Paper>
+                      <h3>Score: {catScore(cat.id)}</h3>
                     </Grid>
                   ))}
               </>

@@ -4,19 +4,22 @@ import Footer from "./components/Footer/footer";
 import Home from "./pages/Home/home";
 import Upload from "./pages/Upload/upload";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import "./App.css";
 
 const App = () => {
   const [catImages, setCatImages] = useState(null);
   const [favourites, setFavourites] = useState(null);
   const [votes, setVotes] = useState(null);
   const [catUploadedData, setCatUploadedData] = useState(null);
+  const [catFavouriteData, setCatFavouriteData] = useState(null);
+  const [catUnfavouriteData, setCatUnfavouriteData] = useState(null);
+  const [catVoteData, setCatVoteData] = useState(null);
   const [loading, setLoading] = useState(false);
   const apiKey = process.env.REACT_APP_CAT_API_KEY;
 
   useEffect(() => {
-    setLoading(true);
     fetchCatData();
-  }, [catUploadedData]);
+  }, [catFavouriteData, catUnfavouriteData, catVoteData, catUploadedData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function fetchCatData() {
     setLoading(true);
@@ -50,7 +53,6 @@ const App = () => {
   }
 
   async function postFavourite(catId) {
-    setLoading(true);
     await fetch("https://api.thecatapi.com/v1/favourites", {
       method: "POST",
       mode: "cors",
@@ -65,13 +67,11 @@ const App = () => {
       body: JSON.stringify({ image_id: catId }),
     })
       .then((response) => response.json())
-      .then((data) => console.log("favouriteData", data))
+      .then((data) => setCatFavouriteData(data))
       .catch((err) => console.log("Error", err));
-    setLoading(false);
   }
 
   async function postUnfavourite(catId) {
-    setLoading(true);
     await fetch(`https://api.thecatapi.com/v1/favourites/${catId}`, {
       method: "DELETE",
       mode: "cors",
@@ -84,13 +84,31 @@ const App = () => {
       referrerPolicy: "no-referrer",
     })
       .then((response) => response.json())
-      .then((data) => console.log("unfavouriteData", data))
+      .then((data) => setCatUnfavouriteData(data))
       .catch((err) => console.log("Error", err));
-    setLoading(false);
+  }
+
+  async function postVote(catId, value) {
+    await fetch("https://api.thecatapi.com/v1/votes", {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "x-api-key": apiKey,
+        "content-type": "application/json",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+      body: JSON.stringify({ image_id: catId, value: parseFloat(value) }),
+    })
+      .then((response) => response.json())
+      .then((data) => setCatVoteData(data))
+      .catch((err) => console.log("Error", err));
   }
 
   return (
-    <Router>
+    <Router className="root">
       <Header />
       <Switch>
         <Route exact path="/">
@@ -101,6 +119,7 @@ const App = () => {
             votes={votes}
             postFavourite={postFavourite}
             postUnfavourite={postUnfavourite}
+            postVote={postVote}
           />
         </Route>
         <Route path="/upload">
