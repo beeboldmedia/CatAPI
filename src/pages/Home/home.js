@@ -101,7 +101,7 @@ const Home = ({
               <CircularProgress />
             ) : (
               <>
-                {catImages !== null ? (
+                {catImages !== null && catImages.length !== 0 ? (
                   catImages.map((cat) => (
                     <Grid className="gridItem" key={cat.id} item>
                       <Paper
@@ -146,7 +146,9 @@ const Home = ({
                     </Grid>
                   ))
                 ) : (
-                  <h3>your images will appear here when you start uploading</h3>
+                  <h3>
+                    (your images will appear here when you start uploading)
+                  </h3>
                 )}
               </>
             )}

@@ -18,6 +18,15 @@ a {
       margin-left: 0px;
     }
   }
+
+  @media (max-width: 600px) {
+    .waracleLogo {
+      display: none;
+    }
+    .title {
+      display: none;
+    }
+  }
 }
 .uploadButton {
   padding: 10px;
@@ -27,5 +36,14 @@ a {
   align-items: center;
   svg {
     margin-left: 5px;
+  }
+
+  @media (max-width: 600px) {
+    svg {
+      margin-left: 0;
+    }
+    span {
+      display: none;
+    }
   }
 }

@@ -17,13 +17,13 @@ const Header = () => {
         <Toolbar className="toolbar">
           <Link className="homeButton" to="/">
             <img alt="cat-icon" src={catIcon} />
-            <Typography variant="h6" color="inherit" noWrap>
+            <Typography className="title" variant="h6" color="inherit" noWrap>
               The CatAPI Challenge by
             </Typography>
-            <img alt="cat-icon" src={waracleLogo} />
+            <img className="waracleLogo" alt="waracle-icon" src={waracleLogo} />
           </Link>
           <Link className="uploadButton" to="/upload">
-            Upload your images!
+            <span>Upload your images!</span>
             <CameraAltIcon />
           </Link>
         </Toolbar>
